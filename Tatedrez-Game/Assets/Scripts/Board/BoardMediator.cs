@@ -35,19 +35,20 @@ public class BoardMediator
 
     private void HandlePlacementMode(Vector3 position)
     {
-        if (!model.IsPieceSelected)
+        var piece = view.ScreenToPiece(position);
+        
+        if (piece && piece.Owner.Equals(model.ActivePlayer) && piece != model.SelectedPiece)
         {
-            //Try Select
-            var piece = view.ScreenToPiece(position);
-            if (piece && piece.Owner.Equals(model.ActivePlayer))
+            if (model.IsPieceSelected)
             {
-                model.Select(piece);
-                view.Select(piece);
+                view.ClearSelection(model.SelectedPiece);
+                model.ClearSelection();
             }
+            model.Select(piece);
+            view.Select(piece);
         }
-        else
+        else if (model.IsPieceSelected)
         {
-            //Try Move
             var cellPosition = view.ScreenToCell(position);
             var cell = model.GetCell(cellPosition.x, cellPosition.y);
 
@@ -78,22 +79,18 @@ public class BoardMediator
 
         if (!cell.IsValid) return;
 
-        if (!model.IsPieceSelected)
+        if (Cell.CellState.Occupied.Equals(cell.State) && model.ActivePlayer.Equals(cell.CurrentPiece.Owner) && cell.CurrentPiece != model.SelectedPiece)
         {
-            //Try Select
-            if (Cell.CellState.Occupied.Equals(cell.State) &&
-                model.ActivePlayer.Equals(cell.CurrentPiece.Owner))
+            if (model.IsPieceSelected)
             {
-                model.Select(cell.CurrentPiece, cell);
-                view.Select(cell.CurrentPiece);
+                view.ClearSelection(model.SelectedPiece);
+                model.ClearSelection();
             }
+            model.Select(cell.CurrentPiece, cell);
+            view.Select(cell.CurrentPiece);
         }
-        else
+        else if (Cell.CellState.Empty.Equals(cell.State) && model.IsPieceSelected)
         {
-            //Try Move
-
-            if (Cell.CellState.Occupied.Equals(cell.State)) return;
-                
             var moveSuccessful = model.Move(model.SelectedPiece, cell);
             if (moveSuccessful)
             {
