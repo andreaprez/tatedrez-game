@@ -65,6 +65,7 @@ public class Piece : MonoBehaviour
     {
         var distanceX = Math.Abs(target.x - origin.x);
         var distanceY = Math.Abs(target.y - origin.y);
+        var movementVector = target - origin;
         
         switch (type)
         {
@@ -74,57 +75,50 @@ public class Piece : MonoBehaviour
             case PieceType.Rook:
                 var isHorizontalMovement = distanceX == 0 || distanceY == 0;
                 if (!isHorizontalMovement) return false;
-                
-                if (target.x - origin.x > 1)
-                {
-                    for (int x = origin.x + 1; x < target.x; x++)
-                    {
-                        if (Cell.CellState.Occupied.Equals(cells[x, origin.y].State))
-                        {
-                            return false;
-                        }
-                    }
-                }
 
-                if (target.y - origin.y > 1)
+                if (movementVector.magnitude > 1)
                 {
-                    for (int y = origin.y + 1; y < target.y; y++)
+                    foreach (var cell in cells)
                     {
-                        if (Cell.CellState.Occupied.Equals(cells[origin.x, y].State))
+                        if (CellObstructingPath(cell, origin, movementVector))
                         {
                             return false;
                         }
                     }
                 }
-                
                 return true;
             
             case PieceType.Bishop:
                 var isDiagonalMovement = distanceX == distanceY;
                 if (!isDiagonalMovement) return false;
 
-                var movementDirection = target - origin;
-                if (movementDirection.magnitude > 2)
+                if (movementVector.magnitude > 2)
                 {
                     foreach (var cell in cells)
                     {
-                        distanceX = Math.Abs(cell.Position.x - origin.x);
-                        distanceY = Math.Abs(cell.Position.y - origin.y);
-                        var cellIsInPath = (distanceX == distanceY) && cell.Position != target && cell.Position != origin;
-
-                        if (cellIsInPath)
+                        if (CellObstructingPath(cell, origin, movementVector))
                         {
-                            if (Cell.CellState.Occupied.Equals(cell.State))
-                            {
-                                return false;
-                            }
+                            return false;
                         }
                     }
                 }
-
                 return true;
+            
         }
-
         return false;
+    }
+
+    private bool CellObstructingPath(Cell cell, Vector2Int origin, Vector2Int movementVector)
+    {
+        var movementVectorToCell = cell.Position - origin;
+
+        Vector2 originalDirection = movementVector;
+        originalDirection.Normalize();
+        Vector2 directionToCell = movementVectorToCell;
+        directionToCell.Normalize();
+
+        var cellIsInPath = originalDirection == directionToCell;
+
+        return cellIsInPath && Cell.CellState.Occupied.Equals(cell.State);
     }
 }
