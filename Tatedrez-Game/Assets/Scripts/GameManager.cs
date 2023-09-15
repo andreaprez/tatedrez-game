@@ -32,4 +32,10 @@ public class GameManager : MonoBehaviour
         var boardModel = new BoardModel();
         new BoardMediator(boardModel, boardView);
     }
+
+    public void ReloadGame()
+    {
+        boardView.Reset();
+        LoadGame();
+    }
 }

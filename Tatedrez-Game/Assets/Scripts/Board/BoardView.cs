@@ -33,6 +33,14 @@ public class BoardView : MonoBehaviour
         UpdatePlayerTurn(activePlayer);
     }
 
+    public void Reset()
+    {
+        foreach (var piece in pieces)
+        {
+            piece.Reset();
+        }
+    }
+
     private void ClearBoardTiles()
     {
         if (tilemap.size.x > 0 || tilemap.size.y > 0)

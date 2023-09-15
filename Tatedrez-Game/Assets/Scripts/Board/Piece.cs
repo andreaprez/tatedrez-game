@@ -21,6 +21,7 @@ public class Piece : MonoBehaviour
     private int positionOffset = 2;
     private bool isPlaced = false;
     private Color originalOverlayColor;
+    private Vector3 initialPosition;
 
     public GameManager.PlayerId Owner => owner;
     public PieceType Type => type;
@@ -37,8 +38,17 @@ public class Piece : MonoBehaviour
                 originalOverlayColor = Color.white;
                 break;
         }
+
+        initialPosition = transform.position;
     }
 
+    public void Reset()
+    {
+        ClearSelection();
+        SetIsPlaced(false);
+        transform.position = initialPosition;
+    }
+    
     public void Select()
     {
         overlayImage.color = Color.green;

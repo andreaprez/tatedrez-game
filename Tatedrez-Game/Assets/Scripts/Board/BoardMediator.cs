@@ -1,3 +1,7 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BoardMediator
@@ -63,11 +67,9 @@ public class BoardMediator
                 
                 view.ClearSelection(model.SelectedPiece);
                 model.ClearSelection();
-
+                
                 CheckPlacementMode();
-
-                var newActivePlayer = model.FinishPlayerTurn();
-                view.UpdatePlayerTurn(newActivePlayer);
+                EndTurn();
             }
         }
     }
@@ -99,8 +101,7 @@ public class BoardMediator
                 view.ClearSelection(model.SelectedPiece);
                 model.ClearSelection();
 
-                var newActivePlayer = model.FinishPlayerTurn();
-                view.UpdatePlayerTurn(newActivePlayer);
+                EndTurn();
             }
         }
     }
@@ -116,11 +117,49 @@ public class BoardMediator
         }
 
         model.SetIsPlacementMode(false);
-        CheckTicTacToe();
     }
 
-    private void CheckTicTacToe()
+    private bool CheckTicTacToe(GameManager.PlayerId activePlayer)
     {
+        List<Vector2Int> playerPositions = new List<Vector2Int>();
+
+        foreach (var cell in model.Cells)
+        {
+            if (Cell.CellState.Occupied.Equals(cell.State) && cell.CurrentPiece != null && cell.CurrentPiece.Owner.Equals(activePlayer))
+            {
+                playerPositions.Add(cell.Position);
+            }
+        }
+
+        if (playerPositions.Count == 3)
+        {
+            var sameRow = playerPositions[0].y == playerPositions[1].y && playerPositions[1].y == playerPositions[2].y;
+            if (sameRow) return true;
+            
+            var sameColumn = playerPositions[0].x == playerPositions[1].x && playerPositions[1].x == playerPositions[2].x;
+            if (sameColumn) return true;
+
+            var sameDiagonal = Math.Abs(playerPositions[0].x - playerPositions[1].x) == Math.Abs(playerPositions[0].y - playerPositions[1].y) &&
+                                    Math.Abs(playerPositions[1].x - playerPositions[2].x) == Math.Abs(playerPositions[1].y - playerPositions[2].y);
+            if (sameDiagonal) return true;
+        }
         
+        return false;
+    }
+
+    private void EndTurn()
+    {
+        var gameover = CheckTicTacToe(model.ActivePlayer);
+
+        if (gameover)
+        {
+            UIManager.Instance.GameOver(model.ActivePlayer);
+            model.GameOver();
+        }
+        else
+        {
+            var newActivePlayer = model.SwitchPlayerTurn();
+            view.UpdatePlayerTurn(newActivePlayer);
+        }
     }
 }

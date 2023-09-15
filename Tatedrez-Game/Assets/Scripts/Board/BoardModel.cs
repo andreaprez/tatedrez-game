@@ -82,7 +82,7 @@ public class BoardModel
         return validMovement;
     }
 
-    public GameManager.PlayerId FinishPlayerTurn()
+    public GameManager.PlayerId SwitchPlayerTurn()
     {
         switch (activePlayer)
         {
@@ -100,5 +100,10 @@ public class BoardModel
     public void SetIsPlacementMode(bool value)
     {
         isPlacementMode = value;
+    }
+
+    public void GameOver()
+    {
+        activePlayer = GameManager.PlayerId.None;
     }
 }
