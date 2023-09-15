@@ -1,18 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [Serializable]
+    public enum PlayerId
     {
+        None,
+        Player1,
+        Player2
+    }
+    
+    public static GameManager Instance = null;
         
+    [SerializeField] private BoardView boardView;
+
+    private void Awake()
+    {
+        Instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        LoadGame();
+    }
+
+    public void LoadGame()
+    {
+        InputHandler.ClearEvents();
+            
+        var boardModel = new BoardModel();
+        new BoardMediator(boardModel, boardView);
     }
 }
