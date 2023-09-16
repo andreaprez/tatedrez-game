@@ -1,165 +1,168 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using Tatedrez.Utils;
 using UnityEngine;
 
-public class BoardMediator
+namespace Tatedrez.Board
 {
-    private readonly BoardModel model;
-    private readonly BoardView view;
-
-    
-    public BoardMediator(BoardModel model, BoardView view)
+    public class BoardMediator
     {
-        this.model = model;
-        this.view = view;
-        
-        view.Setup(model.BoardSize, model.ActivePlayer);
-        
-        foreach (var cell in model.Cells)
-        {
-            view.DrawCell(cell.Position);
-        }
+        private readonly BoardModel model;
+        private readonly BoardView view;
 
-        InputHandler.OnTouchEvent += HandleInput;
-    }
+        public BoardMediator(BoardModel model, BoardView view)
+        {
+            this.model = model;
+            this.view = view;
 
-    private void HandleInput(Vector3 position)
-    {
-        if (model.IsPlacementMode)
-        {
-            HandlePlacementMode(position);
-        }
-        else
-        {
-            HandleDynamicMode(position);
-        }
-    }
+            view.Setup(model.BoardSize, model.ActivePlayer);
 
-    private void HandlePlacementMode(Vector3 position)
-    {
-        var piece = view.ScreenToPiece(position);
-        
-        if (piece && piece.Owner.Equals(model.ActivePlayer) && piece != model.SelectedPiece)
-        {
-            if (model.IsPieceSelected)
+            foreach (var cell in model.Cells)
             {
-                view.ClearSelection(model.SelectedPiece);
-                model.ClearSelection();
+                view.DrawCell(cell.Position);
             }
-            model.Select(piece);
-            view.Select(piece);
-        }
-        else if (model.IsPieceSelected)
-        {
-            var cellPosition = view.ScreenToCell(position);
-            var cell = model.GetCell(cellPosition.x, cellPosition.y);
 
-            if (!cell.IsValid || Cell.CellState.Occupied.Equals(cell.State)) return;
-                
-            var moveSuccessful = model.Move(model.SelectedPiece, cell);
-            if (moveSuccessful)
+            InputHandler.OnTouchEvent += HandleInput;
+        }
+
+        private void HandleInput(Vector3 position)
+        {
+            if (model.IsPlacementMode)
             {
+                HandlePlacementMode(position);
+            }
+            else
+            {
+                HandleDynamicMode(position);
+            }
+        }
+
+        private void HandlePlacementMode(Vector3 position)
+        {
+            var piece = view.ScreenToPiece(position);
+
+            if (piece && piece.Owner.Equals(model.ActivePlayer) && piece != model.SelectedPiece)
+            {
+                if (model.IsPieceSelected)
+                {
+                    view.ClearSelection(model.SelectedPiece);
+                    model.ClearSelection();
+                }
+
+                model.Select(piece);
+                view.Select(piece);
+            }
+            else if (model.IsPieceSelected)
+            {
+                var cellPosition = view.ScreenToCell(position);
+                var cell = model.GetCell(cellPosition.x, cellPosition.y);
+
+                if (!cell.IsValid || Cell.CellState.Occupied.Equals(cell.State)) return;
+
+                model.Move(cell);
                 view.Move(model.SelectedPiece, cellPosition);
-                
+
                 model.SelectedPiece.SetIsPlaced(true);
-                
+
                 view.ClearSelection(model.SelectedPiece);
                 model.ClearSelection();
-                
+
                 CheckPlacementMode();
                 EndTurn();
             }
         }
-    }
-    
-    private void HandleDynamicMode(Vector3 position)
-    {
-        var cellPosition = view.ScreenToCell(position);
-        var cell = model.GetCell(cellPosition.x, cellPosition.y);
 
-        if (!cell.IsValid) return;
-
-        if (Cell.CellState.Occupied.Equals(cell.State) && model.ActivePlayer.Equals(cell.CurrentPiece.Owner) && cell.CurrentPiece != model.SelectedPiece)
+        private void HandleDynamicMode(Vector3 position)
         {
-            if (model.IsPieceSelected)
+            var cellPosition = view.ScreenToCell(position);
+            var cell = model.GetCell(cellPosition.x, cellPosition.y);
+
+            if (!cell.IsValid) return;
+
+            if (Cell.CellState.Occupied.Equals(cell.State) && model.ActivePlayer.Equals(cell.CurrentPiece.Owner) && cell.CurrentPiece != model.SelectedPiece)
             {
-                view.ClearSelection(model.SelectedPiece);
-                model.ClearSelection();
+                if (model.IsPieceSelected)
+                {
+                    view.ClearSelection(model.SelectedPiece);
+                    model.ClearSelection();
+                }
+
+                model.Select(cell.CurrentPiece, cell);
+                view.Select(cell.CurrentPiece);
             }
-            model.Select(cell.CurrentPiece, cell);
-            view.Select(cell.CurrentPiece);
-        }
-        else if (Cell.CellState.Empty.Equals(cell.State) && model.IsPieceSelected)
-        {
-            var moveSuccessful = model.Move(model.SelectedPiece, cell);
-            if (moveSuccessful)
+            else if (Cell.CellState.Empty.Equals(cell.State) && model.IsPieceSelected)
             {
-                view.Move(model.SelectedPiece, cellPosition);
-                
-                view.ClearSelection(model.SelectedPiece);
-                model.ClearSelection();
+                var validMovement = model.SelectedPiece.IsValidMovement(model.SelectionCell.Position, cell.Position, model.Cells);
 
-                EndTurn();
-            }
-        }
-    }
+                if (validMovement)
+                {
+                    model.Move(cell);
+                    view.Move(model.SelectedPiece, cellPosition);
 
-    private void CheckPlacementMode()
-    {
-        foreach (var piece in view.Pieces)
-        {
-            if (!piece.IsPlaced)
-            {
-                return;
+                    view.ClearSelection(model.SelectedPiece);
+                    model.ClearSelection();
+
+                    EndTurn();
+                }
             }
         }
 
-        model.SetIsPlacementMode(false);
-    }
-
-    private bool CheckTicTacToe(GameManager.PlayerId activePlayer)
-    {
-        List<Vector2Int> playerPositions = new List<Vector2Int>();
-
-        foreach (var cell in model.Cells)
+        private void CheckPlacementMode()
         {
-            if (Cell.CellState.Occupied.Equals(cell.State) && cell.CurrentPiece != null && cell.CurrentPiece.Owner.Equals(activePlayer))
+            foreach (var piece in view.Pieces)
             {
-                playerPositions.Add(cell.Position);
+                if (!piece.IsPlaced)
+                {
+                    return;
+                }
             }
+
+            model.ExitPlacementMode();
         }
 
-        if (playerPositions.Count == 3)
+        private bool CheckTicTacToe(PlayerId activePlayer)
         {
-            var sameRow = playerPositions[0].y == playerPositions[1].y && playerPositions[1].y == playerPositions[2].y;
-            if (sameRow) return true;
-            
-            var sameColumn = playerPositions[0].x == playerPositions[1].x && playerPositions[1].x == playerPositions[2].x;
-            if (sameColumn) return true;
+            List<Vector2Int> playerPositions = new List<Vector2Int>();
 
-            var sameDiagonal = Math.Abs(playerPositions[0].x - playerPositions[1].x) == Math.Abs(playerPositions[0].y - playerPositions[1].y) &&
-                                    Math.Abs(playerPositions[1].x - playerPositions[2].x) == Math.Abs(playerPositions[1].y - playerPositions[2].y);
-            if (sameDiagonal) return true;
+            foreach (var cell in model.Cells)
+            {
+                if (Cell.CellState.Occupied.Equals(cell.State) && cell.CurrentPiece != null && cell.CurrentPiece.Owner.Equals(activePlayer))
+                {
+                    playerPositions.Add(cell.Position);
+                }
+            }
+
+            if (playerPositions.Count == 3)
+            {
+                var sameRow = playerPositions[0].y == playerPositions[1].y && playerPositions[1].y == playerPositions[2].y;
+                if (sameRow) return true;
+
+                var sameColumn = playerPositions[0].x == playerPositions[1].x && playerPositions[1].x == playerPositions[2].x;
+                if (sameColumn) return true;
+
+                var sameDiagonal = Math.Abs(playerPositions[0].x - playerPositions[1].x) == Math.Abs(playerPositions[0].y - playerPositions[1].y) &&
+                                        Math.Abs(playerPositions[1].x - playerPositions[2].x) == Math.Abs(playerPositions[1].y - playerPositions[2].y) &&
+                                        Math.Abs(playerPositions[0].x - playerPositions[2].x) == Math.Abs(playerPositions[0].y - playerPositions[2].y);
+                if (sameDiagonal) return true;
+            }
+
+            return false;
         }
-        
-        return false;
-    }
 
-    private void EndTurn()
-    {
-        var gameover = CheckTicTacToe(model.ActivePlayer);
+        private void EndTurn()
+        {
+            var gameover = CheckTicTacToe(model.ActivePlayer);
 
-        if (gameover)
-        {
-            UIManager.Instance.GameOver(model.ActivePlayer);
-            model.GameOver();
-        }
-        else
-        {
-            var newActivePlayer = model.SwitchPlayerTurn();
-            view.UpdatePlayerTurn(newActivePlayer);
+            if (gameover)
+            {
+                view.GameOver(model.ActivePlayer);
+                model.GameOver();
+            }
+            else
+            {
+                var newActivePlayer = model.SwitchPlayerTurn();
+                view.UpdatePlayerTurn(newActivePlayer);
+            }
         }
     }
 }

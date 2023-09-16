@@ -1,109 +1,104 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class BoardModel
+namespace Tatedrez.Board
 {
-    public readonly Vector2Int BoardSize;
-    public readonly Cell[,] Cells;
-    private GameManager.PlayerId activePlayer;
-    private bool isPlacementMode;
-    private bool isPieceSelected;
-    private Piece selectedPiece;
-    private Cell selectionCell;
-
-    public GameManager.PlayerId ActivePlayer => activePlayer;
-    public bool IsPlacementMode => isPlacementMode;
-    public bool IsPieceSelected => isPieceSelected;
-    public Piece SelectedPiece => selectedPiece;
-    
-    public BoardModel()
+    public class BoardModel
     {
-        BoardSize = new Vector2Int(3, 3);
-        Cells = new Cell[BoardSize.x, BoardSize.y];
+        public readonly Vector2Int BoardSize;
+        public readonly Cell[,] Cells;
+        private PlayerId activePlayer;
+        private bool isPlacementMode;
+        private bool isPieceSelected;
+        private Piece selectedPiece;
+        private Cell selectionCell;
 
-        for (var x = 0; x < BoardSize.x; x++)
+        public PlayerId ActivePlayer => activePlayer;
+        public bool IsPlacementMode => isPlacementMode;
+        public bool IsPieceSelected => isPieceSelected;
+        public Piece SelectedPiece => selectedPiece;
+        public Cell SelectionCell => selectionCell;
+
+        public BoardModel()
         {
-            for (var y = 0; y < BoardSize.y; y++)
+            BoardSize = new Vector2Int(3, 3);
+            Cells = new Cell[BoardSize.x, BoardSize.y];
+
+            for (var x = 0; x < BoardSize.x; x++)
             {
-                Cells[x, y] = new Cell(x, y);
+                for (var y = 0; y < BoardSize.y; y++)
+                {
+                    Cells[x, y] = new Cell(x, y);
+                }
+            }
+
+            activePlayer = (PlayerId)Random.Range(1, 3);
+            isPlacementMode = true;
+            isPieceSelected = false;
+            selectedPiece = null;
+            selectionCell = null;
+        }
+
+        public Cell GetCell(int x, int y)
+        {
+            return IsValidCell(x, y) ? Cells[x, y] : new Cell(x, y, false);
+        }
+
+        public void Select(Piece piece, Cell cell = null)
+        {
+            isPieceSelected = true;
+            selectedPiece = piece;
+            selectionCell = cell;
+        }
+
+        public void ClearSelection()
+        {
+            isPieceSelected = false;
+            selectedPiece = null;
+            selectionCell = null;
+        }
+
+        public void Move(Cell target)
+        {
+            target.SetState(Cell.CellState.Occupied);
+            target.SetPiece(selectedPiece);
+
+            if (!isPlacementMode)
+            {
+                selectionCell.SetState(Cell.CellState.Empty);
+                selectionCell.SetPiece(null);
             }
         }
-        
-        activePlayer = (GameManager.PlayerId)Random.Range(1, 3);
-        isPlacementMode = true;
-        isPieceSelected = false;
-        selectedPiece = null;
-        selectionCell = null;
-    }
-    
-    public Cell GetCell(int x, int y)
-    {
-        return IsValidCell(x, y) ? Cells[x, y] : new Cell(x, y, false);
-    }
-    
-    private bool IsValidCell(int x, int y)
-    {
-        return x >= 0 && x < BoardSize.x && y >= 0 && y < BoardSize.y;
-    }
 
-    public void Select(Piece piece, Cell cell = null)
-    {
-        isPieceSelected = true;
-        selectedPiece = piece;
-        selectionCell = cell;
-    }
-    
-    public void ClearSelection()
-    {
-        isPieceSelected = false;
-        selectedPiece = null;
-        selectionCell = null;
-    }
-
-    public bool Move(Piece piece, Cell target)
-    {
-        if (isPlacementMode)
+        public PlayerId SwitchPlayerTurn()
         {
-            target.SetState(Cell.CellState.Occupied);
-            target.SetPiece(selectedPiece);
-            return true;
-        }
-        
-        var validMovement = piece.IsValidMovement(selectionCell.Position, target.Position, Cells);
+            switch (activePlayer)
+            {
+                case PlayerId.Player1:
+                    activePlayer = PlayerId.Player2;
+                    break;
+                case PlayerId.Player2:
+                    activePlayer = PlayerId.Player1;
+                    break;
+            }
 
-        if (validMovement)
-        {
-            selectionCell.SetState(Cell.CellState.Empty);
-            selectionCell.SetPiece(null);
-
-            target.SetState(Cell.CellState.Occupied);
-            target.SetPiece(selectedPiece);
+            return activePlayer;
         }
 
-        return validMovement;
-    }
-
-    public GameManager.PlayerId SwitchPlayerTurn()
-    {
-        switch (activePlayer)
+        public void ExitPlacementMode()
         {
-            case GameManager.PlayerId.Player1:
-                activePlayer = GameManager.PlayerId.Player2;
-                break;
-            case GameManager.PlayerId.Player2:
-                activePlayer = GameManager.PlayerId.Player1;
-                break;
+            isPlacementMode = false;
         }
 
-        return activePlayer;
-    }
+        public void GameOver()
+        {
+            activePlayer = PlayerId.None;
+        }
 
-    public void SetIsPlacementMode(bool value)
-    {
-        isPlacementMode = value;
-    }
-
-    public void GameOver()
-    {
-        activePlayer = GameManager.PlayerId.None;
+        private bool IsValidCell(int x, int y)
+        {
+            return x >= 0 && x < BoardSize.x && y >= 0 && y < BoardSize.y;
+        }
     }
 }

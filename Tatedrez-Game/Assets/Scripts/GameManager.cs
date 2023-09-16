@@ -1,41 +1,37 @@
-using System;
+using Tatedrez.Board;
+using Tatedrez.Utils;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+namespace Tatedrez
 {
-    [Serializable]
-    public enum PlayerId
+    public class GameManager : MonoBehaviour
     {
-        None,
-        Player1,
-        Player2
-    }
-    
-    public static GameManager Instance = null;
-        
-    [SerializeField] private BoardView boardView;
+        public static GameManager Instance = null;
 
-    private void Awake()
-    {
-        Instance = this;
-    }
+        [SerializeField] private BoardView boardView;
 
-    private void Start()
-    {
-        LoadGame();
-    }
+        private void Awake()
+        {
+            Instance = this;
+        }
 
-    public void LoadGame()
-    {
-        InputHandler.ClearEvents();
-            
-        var boardModel = new BoardModel();
-        new BoardMediator(boardModel, boardView);
-    }
+        private void Start()
+        {
+            LoadGame();
+        }
 
-    public void ReloadGame()
-    {
-        boardView.Reset();
-        LoadGame();
+        private void LoadGame()
+        {
+            InputHandler.ClearEvents();
+
+            var boardModel = new BoardModel();
+            new BoardMediator(boardModel, boardView);
+        }
+
+        public void ReloadGame()
+        {
+            boardView.Reset();
+            LoadGame();
+        }
     }
 }
