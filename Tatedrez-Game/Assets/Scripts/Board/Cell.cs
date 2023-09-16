@@ -16,7 +16,6 @@ namespace Tatedrez.Board
         private CellState state;
         private Piece currentPiece;
 
-        public CellState State => state;
         public Piece CurrentPiece => currentPiece;
 
         public Cell(int posX, int posY, bool isValid = true)
@@ -35,6 +34,11 @@ namespace Tatedrez.Board
         public void SetPiece(Piece piece)
         {
             this.currentPiece = piece;
+        }
+
+        public bool IsEmpty()
+        {
+            return CellState.Empty.Equals(state);
         }
     }
 }

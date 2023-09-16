@@ -25,7 +25,6 @@ namespace Tatedrez.Board
         private Vector3 initialPosition;
 
         public PlayerId Owner => owner;
-        public PieceType Type => type;
         public bool IsPlaced => isPlaced;
 
         private void Start()
@@ -43,6 +42,11 @@ namespace Tatedrez.Board
             initialPosition = transform.position;
         }
 
+        public void SetType(PieceType type)
+        {
+            this.type = type;
+        }
+        
         public void Reset()
         {
             ClearSelection();
@@ -130,7 +134,7 @@ namespace Tatedrez.Board
 
             var cellIsInPath = originalDirection == directionToCell;
 
-            return cellIsInPath && Cell.CellState.Occupied.Equals(cell.State);
+            return cellIsInPath && !cell.IsEmpty();
         }
     }
 }
