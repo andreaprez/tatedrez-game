@@ -14,7 +14,10 @@ namespace Tatedrez.Board
         {
             this.model = model;
             this.view = view;
+        }
 
+        public void Init()
+        {
             view.Setup(model.BoardSize, model.ActivePlayer);
 
             foreach (var cell in model.Cells)
@@ -183,5 +186,12 @@ namespace Tatedrez.Board
             view.NoMovesAvailable(newActivePlayer);
 
         }
+        
+#if UNITY_EDITOR
+        public bool TicTacToeTest()
+        {
+            return CheckTicTacToe();
+        }
+#endif
     }
 }

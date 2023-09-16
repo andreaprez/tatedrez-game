@@ -42,11 +42,6 @@ namespace Tatedrez.Board
             initialPosition = transform.position;
         }
 
-        public void SetType(PieceType type)
-        {
-            this.type = type;
-        }
-        
         public void Reset()
         {
             ClearSelection();
@@ -136,5 +131,19 @@ namespace Tatedrez.Board
 
             return cellIsInPath && !cell.IsEmpty();
         }
+        
+#if UNITY_EDITOR
+        public Piece SetType(PieceType type)
+        {
+            this.type = type;
+            return this;
+        }
+        
+        public Piece SetOwner(PlayerId player)
+        {
+            this.owner = player;
+            return this;
+        }
+#endif
     }
 }
