@@ -1,18 +1,38 @@
-using System.Collections;
-using System.Collections.Generic;
+using Tatedrez.Board;
+using Tatedrez.Utils;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+namespace Tatedrez
 {
-    // Start is called before the first frame update
-    void Start()
+    public class GameManager : MonoBehaviour
     {
-        
-    }
+        public static GameManager Instance = null;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        [SerializeField] private BoardView boardView;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
+
+        private void Start()
+        {
+            LoadGame();
+        }
+
+        private void LoadGame()
+        {
+            InputHandler.Instance.SetInputBlocked(false);
+            InputHandler.Instance.ClearEvents();
+
+            var boardModel = new BoardModel();
+            new BoardMediator(boardModel, boardView);
+        }
+
+        public void ReloadGame()
+        {
+            boardView.Reset();
+            LoadGame();
+        }
     }
 }
