@@ -120,6 +120,24 @@ namespace Tatedrez.Board
             model.ExitPlacementMode();
         }
 
+        private void EndTurn()
+        {
+            var gameover = CheckTicTacToe();
+
+            if (gameover)
+            {
+                InputHandler.Instance.SetInputBlocked(true);
+                view.GameOver(model.ActivePlayer);
+            }
+            else
+            {
+                var newActivePlayer = model.SwitchPlayerTurn();
+                view.UpdatePlayerTurn(newActivePlayer);
+
+                if (!model.IsPlacementMode) CheckPlayerCanMove();
+            }
+        }
+        
         private bool CheckTicTacToe()
         {
             List<Vector2Int> playerPositions = new List<Vector2Int>();
@@ -145,24 +163,6 @@ namespace Tatedrez.Board
             }
 
             return false;
-        }
-
-        private void EndTurn()
-        {
-            var gameover = CheckTicTacToe();
-
-            if (gameover)
-            {
-                InputHandler.Instance.SetInputBlocked(true);
-                view.GameOver(model.ActivePlayer);
-            }
-            else
-            {
-                var newActivePlayer = model.SwitchPlayerTurn();
-                view.UpdatePlayerTurn(newActivePlayer);
-
-                if (!model.IsPlacementMode) CheckPlayerCanMove();
-            }
         }
 
         private void CheckPlayerCanMove()
