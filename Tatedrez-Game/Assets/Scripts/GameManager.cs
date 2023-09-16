@@ -22,7 +22,8 @@ namespace Tatedrez
 
         private void LoadGame()
         {
-            InputHandler.ClearEvents();
+            InputHandler.Instance.SetInputBlocked(false);
+            InputHandler.Instance.ClearEvents();
 
             var boardModel = new BoardModel();
             new BoardMediator(boardModel, boardView);

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -45,6 +46,36 @@ namespace Tatedrez.Board
             return IsValidCell(x, y) ? Cells[x, y] : new Cell(x, y, false);
         }
 
+        public List<Cell> GetPlayerOwnedCells(PlayerId player)
+        {
+            List<Cell> playerOwnedCells = new List<Cell>();
+
+            foreach (var cell in Cells)
+            {
+                if (Cell.CellState.Occupied.Equals(cell.State) && cell.CurrentPiece != null && cell.CurrentPiece.Owner.Equals(player))
+                {
+                    playerOwnedCells.Add(cell);
+                }
+            }
+
+            return playerOwnedCells;
+        }
+
+        public List<Cell> GetEmptyCells()
+        {
+            List<Cell> emptyCells = new List<Cell>();
+
+            foreach (var cell in Cells)
+            {
+                if (Cell.CellState.Empty.Equals(cell.State))
+                {
+                    emptyCells.Add(cell);
+                }
+            }
+
+            return emptyCells;
+        }
+        
         public void Select(Piece piece, Cell cell = null)
         {
             isPieceSelected = true;
@@ -89,11 +120,6 @@ namespace Tatedrez.Board
         public void ExitPlacementMode()
         {
             isPlacementMode = false;
-        }
-
-        public void GameOver()
-        {
-            activePlayer = PlayerId.None;
         }
 
         private bool IsValidCell(int x, int y)

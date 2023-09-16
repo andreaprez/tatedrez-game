@@ -22,7 +22,7 @@ namespace Tatedrez.Board
                 view.DrawCell(cell.Position);
             }
 
-            InputHandler.OnTouchEvent += HandleInput;
+            InputHandler.Instance.OnTouchEvent += HandleInput;
         }
 
         private void HandleInput(Vector3 position)
@@ -120,16 +120,14 @@ namespace Tatedrez.Board
             model.ExitPlacementMode();
         }
 
-        private bool CheckTicTacToe(PlayerId activePlayer)
+        private bool CheckTicTacToe()
         {
             List<Vector2Int> playerPositions = new List<Vector2Int>();
-
-            foreach (var cell in model.Cells)
+            
+            List<Cell> playerOwnedCells = model.GetPlayerOwnedCells(model.ActivePlayer);
+            foreach (var cell in playerOwnedCells)
             {
-                if (Cell.CellState.Occupied.Equals(cell.State) && cell.CurrentPiece != null && cell.CurrentPiece.Owner.Equals(activePlayer))
-                {
-                    playerPositions.Add(cell.Position);
-                }
+                playerPositions.Add(cell.Position);
             }
 
             if (playerPositions.Count == 3)
@@ -151,18 +149,41 @@ namespace Tatedrez.Board
 
         private void EndTurn()
         {
-            var gameover = CheckTicTacToe(model.ActivePlayer);
+            var gameover = CheckTicTacToe();
 
             if (gameover)
             {
+                InputHandler.Instance.SetInputBlocked(true);
                 view.GameOver(model.ActivePlayer);
-                model.GameOver();
             }
             else
             {
                 var newActivePlayer = model.SwitchPlayerTurn();
                 view.UpdatePlayerTurn(newActivePlayer);
+
+                if (!model.IsPlacementMode) CheckPlayerCanMove();
             }
+        }
+
+        private void CheckPlayerCanMove()
+        {
+            List<Cell> playerOwnedCells = model.GetPlayerOwnedCells(model.ActivePlayer);
+            
+            List<Cell> emptyCells = model.GetEmptyCells();
+            
+            foreach (var playerCell in playerOwnedCells)
+            {
+                foreach (var emptyCell in emptyCells)
+                {
+                    var validMovement = playerCell.CurrentPiece.IsValidMovement(playerCell.Position, emptyCell.Position, model.Cells);
+                    if (validMovement) return;
+                }
+            }
+            
+            InputHandler.Instance.SetInputBlocked(true);
+            var newActivePlayer = model.SwitchPlayerTurn();
+            view.NoMovesAvailable(newActivePlayer);
+
         }
     }
 }

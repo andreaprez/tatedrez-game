@@ -1,27 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using Tatedrez.Libraries;
+using Tatedrez.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.UI;
 
 namespace Tatedrez.Board
 {
     public class BoardView : MonoBehaviour
     {
+        [SerializeField] private Camera mainCamera;
+        
+        [Header("Board")]
         [SerializeField] private BoardLibrary boardLibrary;
         [SerializeField] private Tilemap tilemap;
         [SerializeField] private List<Piece> pieces;
 
-        [SerializeField] private TextMeshProUGUI turnPlayer1;
-        [SerializeField] private TextMeshProUGUI turnPlayer2;
-
-        [SerializeField] private Camera mainCamera;
+        [Header("Turns Layout")]
+        [SerializeField] private TextMeshProUGUI turnPlayer1Text;
+        [SerializeField] private TextMeshProUGUI turnPlayer2Text;
+        [SerializeField] private GameObject noMovesAvailableLayout;
         
+        [Header("GameOver Layout")]
         [SerializeField] private GameObject gameOverLayout;
         [SerializeField] private TextMeshProUGUI gameOverText;
-        [SerializeField] private Button restartButton;
 
         private readonly int tileSize = 36;
         private readonly int boardScale = 6;
@@ -36,8 +39,8 @@ namespace Tatedrez.Board
             var boardPosY = boardSize.y * tileSize * boardScale / -2;
             tilemap.gameObject.transform.localPosition = new Vector3(boardPosX, boardPosY, 0);
 
-            turnPlayer1.gameObject.SetActive(false);
-            turnPlayer2.gameObject.SetActive(false);
+            turnPlayer1Text.gameObject.SetActive(false);
+            turnPlayer2Text.gameObject.SetActive(false);
 
             UpdatePlayerTurn(activePlayer);
         }
@@ -110,18 +113,23 @@ namespace Tatedrez.Board
 
         public void UpdatePlayerTurn(PlayerId newActivePlayer)
         {
-            turnPlayer1.gameObject.SetActive(false);
-            turnPlayer2.gameObject.SetActive(false);
+            turnPlayer1Text.gameObject.SetActive(false);
+            turnPlayer2Text.gameObject.SetActive(false);
 
             switch (newActivePlayer)
             {
                 case PlayerId.Player1:
-                    turnPlayer1.gameObject.SetActive(true);
+                    turnPlayer1Text.gameObject.SetActive(true);
                     break;
                 case PlayerId.Player2:
-                    turnPlayer2.gameObject.SetActive(true);
+                    turnPlayer2Text.gameObject.SetActive(true);
                     break;
             }
+        }
+
+        public void NoMovesAvailable(PlayerId newActivePlayer)
+        {
+            StartCoroutine(ShowNoMovesAvailable(newActivePlayer));
         }
         
         public void GameOver(PlayerId winner)
@@ -137,18 +145,22 @@ namespace Tatedrez.Board
                     break;
             }
             gameOverText.text = winnerName + " wins!";
-
-            restartButton.interactable = false;
-
-            StartCoroutine(ShowGameOver());
+            
+            gameOverLayout.SetActive(true);
         }
 
-        private IEnumerator ShowGameOver()
+        private IEnumerator ShowNoMovesAvailable(PlayerId newActivePlayer)
         {
             yield return new WaitForSeconds(1f);
 
-            restartButton.interactable = true;
-            gameOverLayout.SetActive(true);
+            noMovesAvailableLayout.SetActive(true);
+            
+            yield return new WaitForSeconds(2f);
+
+            noMovesAvailableLayout.SetActive(false);
+            UpdatePlayerTurn(newActivePlayer);
+            InputHandler.Instance.SetInputBlocked(false);
+
         }
     }
 }
