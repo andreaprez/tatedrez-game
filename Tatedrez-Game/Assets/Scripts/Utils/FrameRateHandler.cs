@@ -3,13 +3,19 @@ using UnityEngine;
 
 namespace Tatedrez
 {
-    public class FPSDisplay : MonoBehaviour
+    public class FrameRateHandler : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI fpsText;
 
         private float timer = 0.5f;
         private float elapsed = 0f;
-        
+
+        private void Awake()
+        {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = 60;
+        }
+
         private void Update()
         {
             elapsed += Time.deltaTime;
