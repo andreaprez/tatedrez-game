@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -52,7 +51,7 @@ namespace Tatedrez.Board
 
             foreach (var cell in Cells)
             {
-                if (Cell.CellState.Occupied.Equals(cell.State) && cell.CurrentPiece != null && cell.CurrentPiece.Owner.Equals(player))
+                if (!cell.IsEmpty() && cell.CurrentPiece != null && player.Equals(cell.CurrentPiece.Owner))
                 {
                     playerOwnedCells.Add(cell);
                 }
@@ -67,7 +66,7 @@ namespace Tatedrez.Board
 
             foreach (var cell in Cells)
             {
-                if (Cell.CellState.Empty.Equals(cell.State))
+                if (cell.IsEmpty())
                 {
                     emptyCells.Add(cell);
                 }

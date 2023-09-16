@@ -14,7 +14,10 @@ namespace Tatedrez.Board
         {
             this.model = model;
             this.view = view;
+        }
 
+        public void Init()
+        {
             view.Setup(model.BoardSize, model.ActivePlayer);
 
             foreach (var cell in model.Cells)
@@ -41,31 +44,19 @@ namespace Tatedrez.Board
         {
             var piece = view.ScreenToPiece(position);
 
-            if (piece && piece.Owner.Equals(model.ActivePlayer) && piece != model.SelectedPiece)
+            if (piece && model.ActivePlayer.Equals(piece.Owner) && piece != model.SelectedPiece)
             {
-                if (model.IsPieceSelected)
-                {
-                    view.ClearSelection(model.SelectedPiece);
-                    model.ClearSelection();
-                }
-
-                model.Select(piece);
-                view.Select(piece);
+                SelectPiece(piece);
             }
             else if (model.IsPieceSelected)
             {
                 var cellPosition = view.ScreenToCell(position);
                 var cell = model.GetCell(cellPosition.x, cellPosition.y);
 
-                if (!cell.IsValid || Cell.CellState.Occupied.Equals(cell.State)) return;
-
-                model.Move(cell);
-                view.Move(model.SelectedPiece, cellPosition);
+                if (!cell.IsValid || !cell.IsEmpty()) return;
 
                 model.SelectedPiece.SetIsPlaced(true);
-
-                view.ClearSelection(model.SelectedPiece);
-                model.ClearSelection();
+                MovePiece(cell, cellPosition);
 
                 CheckPlacementMode();
                 EndTurn();
@@ -79,34 +70,44 @@ namespace Tatedrez.Board
 
             if (!cell.IsValid) return;
 
-            if (Cell.CellState.Occupied.Equals(cell.State) && model.ActivePlayer.Equals(cell.CurrentPiece.Owner) && cell.CurrentPiece != model.SelectedPiece)
+            if (!cell.IsEmpty() && model.ActivePlayer.Equals(cell.CurrentPiece.Owner) && cell.CurrentPiece != model.SelectedPiece)
             {
-                if (model.IsPieceSelected)
-                {
-                    view.ClearSelection(model.SelectedPiece);
-                    model.ClearSelection();
-                }
-
-                model.Select(cell.CurrentPiece, cell);
-                view.Select(cell.CurrentPiece);
+                SelectPiece(cell.CurrentPiece, cell);
             }
-            else if (Cell.CellState.Empty.Equals(cell.State) && model.IsPieceSelected)
+            else if (cell.IsEmpty() && model.IsPieceSelected)
             {
                 var validMovement = model.SelectedPiece.IsValidMovement(model.SelectionCell.Position, cell.Position, model.Cells);
 
                 if (validMovement)
                 {
-                    model.Move(cell);
-                    view.Move(model.SelectedPiece, cellPosition);
-
-                    view.ClearSelection(model.SelectedPiece);
-                    model.ClearSelection();
+                    MovePiece(cell, cellPosition);
 
                     EndTurn();
                 }
             }
         }
 
+        private void SelectPiece(Piece piece, Cell cell = null)
+        {
+            if (model.IsPieceSelected)
+            {
+                view.ClearSelection(model.SelectedPiece);
+                model.ClearSelection();
+            }
+
+            model.Select(piece, cell);
+            view.Select(piece);
+        }
+
+        private void MovePiece(Cell cell, Vector2Int cellPosition)
+        {
+            model.Move(cell);
+            view.Move(model.SelectedPiece, cellPosition);
+
+            view.ClearSelection(model.SelectedPiece);
+            model.ClearSelection();
+        }
+        
         private void CheckPlacementMode()
         {
             foreach (var piece in view.Pieces)
@@ -185,5 +186,12 @@ namespace Tatedrez.Board
             view.NoMovesAvailable(newActivePlayer);
 
         }
+        
+#if UNITY_EDITOR
+        public bool TicTacToeTest()
+        {
+            return CheckTicTacToe();
+        }
+#endif
     }
 }

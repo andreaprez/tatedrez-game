@@ -26,7 +26,8 @@ namespace Tatedrez
             InputHandler.Instance.ClearEvents();
 
             var boardModel = new BoardModel();
-            new BoardMediator(boardModel, boardView);
+            var boardMediator = new BoardMediator(boardModel, boardView);
+            boardMediator.Init();
         }
 
         public void ReloadGame()
