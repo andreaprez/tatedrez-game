@@ -6,6 +6,7 @@ namespace Tatedrez.Libraries
     {
         private static BoardLibrary boardLibrary;
         private static AudioLibrary audioLibrary;
+        private static TextsLibrary textsLibrary;
 
         public static BoardLibrary GetBoardLibrary()
         {
@@ -25,6 +26,16 @@ namespace Tatedrez.Libraries
             }
 
             return audioLibrary;
+        }
+        
+        public static TextsLibrary GetTextsLibrary()
+        {
+            if (textsLibrary == null)
+            {
+                textsLibrary = Resources.Load(nameof(TextsLibrary)) as TextsLibrary;
+            }
+
+            return textsLibrary;
         }
     }
 }

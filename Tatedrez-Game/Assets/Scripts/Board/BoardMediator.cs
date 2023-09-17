@@ -19,12 +19,7 @@ namespace Tatedrez.Board
 
         public void Init()
         {
-            view.Setup(model.BoardSize, model.ActivePlayer);
-
-            foreach (var cell in model.Cells)
-            {
-                view.DrawCell(cell.Position);
-            }
+            view.Setup(model.BoardSize, model.ActivePlayer, model.Cells);
 
             InputHandler.Instance.OnTouchEvent += HandleInput;
         }
