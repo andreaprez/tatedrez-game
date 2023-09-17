@@ -1,37 +1,28 @@
 using System;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Tatedrez.Board
 {
     public abstract class Piece : MonoBehaviour
     {
-        [Serializable]
-        public enum PieceType
-        {
-            Knight,
-            Rook,
-            Bishop
-        }
-
         [SerializeField] private PlayerId owner;
         [SerializeField] private Image overlayImage;
         [SerializeField] private BoxCollider2D boxCollider;
         
         private int positionOffset = 2;
         private bool isPlaced = false;
+        private bool isSelected = false;
         private Color originalOverlayColor;
         private Vector3 initialPosition;
-
-        protected PieceType type;
         
         public PlayerId Owner => owner;
         public bool IsPlaced => isPlaced;
 
         public abstract bool IsValidMovement(Vector2Int origin, Vector2Int target, Cell[,] cells);
         
-        protected virtual void Start()
+        private void Start()
         {
             switch (owner)
             {
@@ -56,11 +47,13 @@ namespace Tatedrez.Board
         public void Select()
         {
             overlayImage.color = Color.green;
+            isSelected = true;
         }
         
         public void ClearSelection()
         {
             overlayImage.color = originalOverlayColor;
+            isSelected = false;
         }
 
         public void Move(Vector3 position)
@@ -69,6 +62,11 @@ namespace Tatedrez.Board
             transform.position = position;
         }
 
+        public void InvalidMovement()
+        {
+            StartCoroutine(ShowInvalidMovement());
+        }
+        
         public void SetIsPlaced(bool value)
         {
             isPlaced = value;
@@ -87,6 +85,22 @@ namespace Tatedrez.Board
             var cellIsInPath = originalDirection == directionToCell;
 
             return cellIsInPath && !cell.IsEmpty();
+        }
+
+        private IEnumerator ShowInvalidMovement()
+        {
+            overlayImage.color = Color.red;
+
+            yield return new WaitForSeconds(0.7f);
+
+            if (isSelected)
+            {
+                overlayImage.color = Color.green;
+            }
+            else
+            {
+                overlayImage.color = originalOverlayColor;
+            }
         }
         
 #if UNITY_EDITOR

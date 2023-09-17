@@ -5,12 +5,6 @@ namespace Tatedrez.Board
 {
     public class Knight : Piece
     {
-        protected override void Start()
-        {
-            type = PieceType.Knight;
-            base.Start();
-        }
-        
         public override bool IsValidMovement(Vector2Int origin, Vector2Int target, Cell[,] cells)
         {
             var distanceX = Math.Abs(target.x - origin.x);

@@ -31,7 +31,7 @@ namespace Tatedrez.Managers
         {
             foreach (AudioClip soundAudioClip in LibrariesHandler.GetAudioLibrary().AudioClips)
             {
-                if (soundAudioClip.name.Contains(sound.ToString()))
+                if (soundAudioClip.name.Equals(sound.ToString()))
                 {
                     return soundAudioClip;
                 }

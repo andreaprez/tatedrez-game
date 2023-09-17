@@ -82,8 +82,12 @@ namespace Tatedrez.Board
                 if (validMovement)
                 {
                     MovePiece(cell, cellPosition);
-
                     EndTurn();
+                }
+                else
+                {
+                    AudioManager.PlaySound(AudioManager.Sound.InvalidPlacement);
+                    model.SelectedPiece.InvalidMovement();
                 }
             }
         }
@@ -94,12 +98,12 @@ namespace Tatedrez.Board
             
             if (model.IsPieceSelected)
             {
-                view.ClearSelection(model.SelectedPiece);
+                model.SelectedPiece.ClearSelection();
                 model.ClearSelection();
             }
 
             model.Select(piece, cell);
-            view.Select(piece);
+            model.SelectedPiece.Select();
         }
 
         private void MovePiece(Cell cell, Vector2Int cellPosition)
@@ -109,7 +113,7 @@ namespace Tatedrez.Board
             model.Move(cell);
             view.Move(model.SelectedPiece, cellPosition);
 
-            view.ClearSelection(model.SelectedPiece);
+            model.SelectedPiece.ClearSelection();
             model.ClearSelection();
         }
         

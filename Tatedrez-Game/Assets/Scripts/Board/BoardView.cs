@@ -92,16 +92,6 @@ namespace Tatedrez.Board
             return (Vector2Int)cellPosition;
         }
 
-        public void Select(Piece piece)
-        {
-            piece.Select();
-        }
-
-        public void ClearSelection(Piece piece)
-        {
-            piece.ClearSelection();
-        }
-
         public void Move(Piece piece, Vector2Int position)
         {
             Vector3Int vector = new Vector3Int(position.x, position.y);
