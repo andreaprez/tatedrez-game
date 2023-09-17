@@ -5,7 +5,6 @@ using Tatedrez.Libraries;
 using Tatedrez.Utils;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 namespace Tatedrez.Board
