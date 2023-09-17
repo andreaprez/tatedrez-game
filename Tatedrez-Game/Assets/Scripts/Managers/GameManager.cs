@@ -6,14 +6,7 @@ namespace Tatedrez
 {
     public class GameManager : MonoBehaviour
     {
-        public static GameManager Instance = null;
-
         [SerializeField] private BoardView boardView;
-
-        private void Awake()
-        {
-            Instance = this;
-        }
 
         private void Start()
         {

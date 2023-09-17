@@ -81,7 +81,7 @@ namespace Tatedrez.Tests
         private Piece InitPiece(PlayerId activePlayer)
         {
             var gameobject = new GameObject();
-            var piece = gameobject.AddComponent<Piece>();
+            var piece = gameobject.AddComponent<Knight>();
             return piece.SetOwner(activePlayer);
         }
         

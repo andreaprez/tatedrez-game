@@ -53,7 +53,7 @@ namespace Tatedrez.Tests
         private Piece InitPiece()
         {
             var gameobject = new GameObject();
-            return gameobject.AddComponent<Piece>();
+            return gameobject.AddComponent<Knight>();
         }
     }
 }

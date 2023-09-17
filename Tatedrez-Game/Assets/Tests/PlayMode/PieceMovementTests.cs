@@ -143,8 +143,18 @@ namespace Tatedrez.Tests
         private Piece InitPiece(Piece.PieceType type)
         {
             var gameobject = new GameObject();
-            var piece = gameobject.AddComponent<Piece>();
-            return piece.SetType(type);
+            
+            switch (type)
+            {
+                case Piece.PieceType.Knight:
+                    return gameobject.AddComponent<Knight>();
+                case Piece.PieceType.Rook:
+                    return gameobject.AddComponent<Rook>();
+                case Piece.PieceType.Bishop:
+                    return gameobject.AddComponent<Bishop>();
+            }
+
+            return null;
         }
     }
 }
