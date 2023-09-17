@@ -1,12 +1,8 @@
 {
-    "name": "Board",
+    "name": "Audio",
     "rootNamespace": "",
     "references": [
-        "GUID:ab4492e8880c90c49ab79e03c2f1f115",
-        "GUID:a258cd4d890e5344ebb5f25b4fb28b54",
-        "GUID:4a7311107d783124a86c47ce46b1ee35",
-        "GUID:17f2c1747f25a3042a022ab2de1e55e9",
-        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+        "GUID:a258cd4d890e5344ebb5f25b4fb28b54"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

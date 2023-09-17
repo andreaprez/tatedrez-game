@@ -11,7 +11,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator KnightMovementValid()
         {
-            var piece = InitPiece(Piece.PieceType.Knight);
+            var piece = InitPiece(PieceType.Knight);
 
             var model = new BoardModel();
 
@@ -27,7 +27,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator KnightMovementInvalid()
         {
-            var piece = InitPiece(Piece.PieceType.Knight);
+            var piece = InitPiece(PieceType.Knight);
 
             var model = new BoardModel();
 
@@ -43,7 +43,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator RookMovementValid()
         {
-            var piece = InitPiece(Piece.PieceType.Rook);
+            var piece = InitPiece(PieceType.Rook);
 
             var model = new BoardModel();
 
@@ -59,7 +59,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator RookMovementInvalid()
         {
-            var piece = InitPiece(Piece.PieceType.Rook);
+            var piece = InitPiece(PieceType.Rook);
 
             var model = new BoardModel();
 
@@ -75,7 +75,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator BishopMovementValid()
         {
-            var piece = InitPiece(Piece.PieceType.Bishop);
+            var piece = InitPiece(PieceType.Bishop);
 
             var model = new BoardModel();
 
@@ -91,7 +91,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator BishopMovementInvalid()
         {
-            var piece = InitPiece(Piece.PieceType.Bishop);
+            var piece = InitPiece(PieceType.Bishop);
 
             var model = new BoardModel();
 
@@ -107,7 +107,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator RookMovementObstacle()
         {
-            var piece = InitPiece(Piece.PieceType.Rook);
+            var piece = InitPiece(PieceType.Rook);
 
             var model = new BoardModel();
 
@@ -125,7 +125,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator BishopMovementObstacle()
         {
-            var piece = InitPiece(Piece.PieceType.Bishop);
+            var piece = InitPiece(PieceType.Bishop);
 
             var model = new BoardModel();
 
@@ -140,21 +140,27 @@ namespace Tatedrez.Tests
             yield return null;
         }
 
-        private Piece InitPiece(Piece.PieceType type)
+        private Piece InitPiece(PieceType type)
         {
             var gameobject = new GameObject();
             
             switch (type)
             {
-                case Piece.PieceType.Knight:
+                case PieceType.Knight:
                     return gameobject.AddComponent<Knight>();
-                case Piece.PieceType.Rook:
+                case PieceType.Rook:
                     return gameobject.AddComponent<Rook>();
-                case Piece.PieceType.Bishop:
+                case PieceType.Bishop:
                     return gameobject.AddComponent<Bishop>();
             }
-
             return null;
+        }
+        
+        private enum PieceType
+        {
+            Knight,
+            Rook,
+            Bishop
         }
     }
 }

@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace Tatedrez
+namespace Tatedrez.Utils
 {
     public class FrameRateHandler : MonoBehaviour
     {

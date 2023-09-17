@@ -13,7 +13,6 @@ namespace Tatedrez.Board
         [SerializeField] private Camera mainCamera;
         
         [Header("Board")]
-        [SerializeField] private BoardLibrary boardLibrary;
         [SerializeField] private Tilemap tilemap;
         [SerializeField] private List<Piece> pieces;
 
@@ -26,17 +25,16 @@ namespace Tatedrez.Board
         [SerializeField] private GameObject gameOverLayout;
         [SerializeField] private TextMeshProUGUI gameOverText;
 
-        private readonly int tileSize = 36;
-        private readonly int boardScale = 6;
-
+        private readonly int tileSize = 216;
+        
         public List<Piece> Pieces => pieces;
 
         public void Setup(Vector2Int boardSize, PlayerId activePlayer)
         {
             ClearBoardTiles();
 
-            var boardPosX = boardSize.x * tileSize * boardScale / -2;
-            var boardPosY = boardSize.y * tileSize * boardScale / -2;
+            var boardPosX = boardSize.x * tileSize / -2;
+            var boardPosY = boardSize.y * tileSize / -2;
             tilemap.gameObject.transform.localPosition = new Vector3(boardPosX, boardPosY, 0);
 
             turnPlayer1Text.gameObject.SetActive(false);
@@ -65,11 +63,11 @@ namespace Tatedrez.Board
 
         public void DrawCell(Vector2Int position)
         {
-            var tile = boardLibrary.WhiteTile;
+            var tile = LibrariesHandler.GetBoardLibrary().WhiteTile;
 
             if ((position.x % 2 == 0 && position.y % 2 == 0) || (position.x % 2 > 0 && position.y % 2 > 0))
             {
-                tile = boardLibrary.BlackTile;
+                tile = LibrariesHandler.GetBoardLibrary().BlackTile;
             }
 
             tilemap.SetTile((Vector3Int)position, tile);
@@ -92,16 +90,6 @@ namespace Tatedrez.Board
             var worldPosition = mainCamera.ScreenToWorldPoint(position);
             var cellPosition = tilemap.WorldToCell(worldPosition);
             return (Vector2Int)cellPosition;
-        }
-
-        public void Select(Piece piece)
-        {
-            piece.Select();
-        }
-
-        public void ClearSelection(Piece piece)
-        {
-            piece.ClearSelection();
         }
 
         public void Move(Piece piece, Vector2Int position)
@@ -160,7 +148,6 @@ namespace Tatedrez.Board
             noMovesAvailableLayout.SetActive(false);
             UpdatePlayerTurn(newActivePlayer);
             InputHandler.Instance.SetInputBlocked(false);
-
         }
     }
 }
