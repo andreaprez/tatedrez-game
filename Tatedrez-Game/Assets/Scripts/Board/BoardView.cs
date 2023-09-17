@@ -5,6 +5,7 @@ using Tatedrez.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 namespace Tatedrez.Board
 {
@@ -19,17 +20,20 @@ namespace Tatedrez.Board
         [Header("Turns Layout")]
         [SerializeField] private TextMeshProUGUI turnPlayer1Text;
         [SerializeField] private TextMeshProUGUI turnPlayer2Text;
-        [SerializeField] private GameObject noMovesAvailableLayout;
+        [SerializeField] private TextMeshProUGUI noMovesAvailableText;
         
         [Header("GameOver Layout")]
         [SerializeField] private GameObject gameOverLayout;
         [SerializeField] private TextMeshProUGUI gameOverText;
 
+        [Header("Restart Button")]
+        [SerializeField] private TextMeshProUGUI restartButtonText;
+        
         private readonly int tileSize = 216;
         
         public List<Piece> Pieces => pieces;
 
-        public void Setup(Vector2Int boardSize, PlayerId activePlayer)
+        public void Setup(Vector2Int boardSize, PlayerId activePlayer, Cell[,] cells)
         {
             ClearBoardTiles();
 
@@ -37,8 +41,12 @@ namespace Tatedrez.Board
             var boardPosY = boardSize.y * tileSize / -2;
             tilemap.gameObject.transform.localPosition = new Vector3(boardPosX, boardPosY, 0);
 
-            turnPlayer1Text.gameObject.SetActive(false);
-            turnPlayer2Text.gameObject.SetActive(false);
+            foreach (var cell in cells)
+            {
+                DrawCell(cell.Position);
+            }
+            
+            SetTexts();
 
             UpdatePlayerTurn(activePlayer);
         }
@@ -53,15 +61,7 @@ namespace Tatedrez.Board
             }
         }
 
-        private void ClearBoardTiles()
-        {
-            if (tilemap.size.x > 0 || tilemap.size.y > 0)
-            {
-                tilemap.ClearAllTiles();
-            }
-        }
-
-        public void DrawCell(Vector2Int position)
+        private void DrawCell(Vector2Int position)
         {
             var tile = LibrariesHandler.GetBoardLibrary().WhiteTile;
 
@@ -122,30 +122,39 @@ namespace Tatedrez.Board
         
         public void GameOver(PlayerId winner)
         {
-            var winnerName = "";
-            switch (winner)
-            {
-                case PlayerId.Player1:
-                    winnerName = "Player 1";
-                    break;
-                case PlayerId.Player2:
-                    winnerName = "Player 2";
-                    break;
-            }
-            gameOverText.text = winnerName + " wins!";
+            var winnerId = (int)winner;
+            gameOverText.text = LibrariesHandler.GetTextsLibrary().Winner.Replace("%", winnerId.ToString());
             
             gameOverLayout.SetActive(true);
         }
 
+        private void SetTexts()
+        {
+            turnPlayer1Text.text = LibrariesHandler.GetTextsLibrary().PlayerTurn.Replace("%", "1");
+            turnPlayer2Text.text = LibrariesHandler.GetTextsLibrary().PlayerTurn.Replace("%", "2");
+
+            noMovesAvailableText.text = LibrariesHandler.GetTextsLibrary().NoMovesAvailable;
+
+            restartButtonText.text = LibrariesHandler.GetTextsLibrary().RestartButton;
+        }
+
+        private void ClearBoardTiles()
+        {
+            if (tilemap.size.x > 0 || tilemap.size.y > 0)
+            {
+                tilemap.ClearAllTiles();
+            }
+        }
+        
         private IEnumerator ShowNoMovesAvailable(PlayerId newActivePlayer)
         {
             yield return new WaitForSeconds(1f);
 
-            noMovesAvailableLayout.SetActive(true);
+            noMovesAvailableText.gameObject.SetActive(true);
             
             yield return new WaitForSeconds(2f);
 
-            noMovesAvailableLayout.SetActive(false);
+            noMovesAvailableText.gameObject.SetActive(false);
             UpdatePlayerTurn(newActivePlayer);
             InputHandler.Instance.SetInputBlocked(false);
         }
