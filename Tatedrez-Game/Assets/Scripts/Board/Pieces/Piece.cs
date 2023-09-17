@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Tatedrez.Board
@@ -16,7 +17,7 @@ namespace Tatedrez.Board
 
         [SerializeField] private PlayerId owner;
         [SerializeField] private Image overlayImage;
-        [SerializeField] private BoxCollider2D collider;
+        [SerializeField] private BoxCollider2D boxCollider;
         
         private int positionOffset = 2;
         private bool isPlaced = false;
@@ -71,7 +72,7 @@ namespace Tatedrez.Board
         public void SetIsPlaced(bool value)
         {
             isPlaced = value;
-            collider.enabled = !isPlaced;
+            boxCollider.enabled = !isPlaced;
         }
 
         protected bool CellObstructingPath(Cell cell, Vector2Int origin, Vector2Int movementVector)

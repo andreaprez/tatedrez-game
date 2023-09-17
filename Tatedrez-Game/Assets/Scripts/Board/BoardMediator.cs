@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Tatedrez.Managers;
 using Tatedrez.Utils;
 using UnityEngine;
 
@@ -89,6 +90,8 @@ namespace Tatedrez.Board
 
         private void SelectPiece(Piece piece, Cell cell = null)
         {
+            AudioManager.PlaySound(AudioManager.Sound.Select);
+            
             if (model.IsPieceSelected)
             {
                 view.ClearSelection(model.SelectedPiece);
@@ -101,6 +104,8 @@ namespace Tatedrez.Board
 
         private void MovePiece(Cell cell, Vector2Int cellPosition)
         {
+            AudioManager.PlaySound(AudioManager.Sound.Place);
+
             model.Move(cell);
             view.Move(model.SelectedPiece, cellPosition);
 

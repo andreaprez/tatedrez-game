@@ -1,15 +1,23 @@
 using Tatedrez.Board;
 using Tatedrez.Utils;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace Tatedrez
+namespace Tatedrez.Managers
 {
     public class GameManager : MonoBehaviour
     {
         [SerializeField] private BoardView boardView;
+        [SerializeField] private Button restartButton;
 
         private void Start()
         {
+            restartButton.onClick.AddListener(() =>
+            {
+                AudioManager.PlaySound(AudioManager.Sound.RestartButton);
+
+                ReloadGame();
+            });
             LoadGame();
         }
 
@@ -23,7 +31,7 @@ namespace Tatedrez
             boardMediator.Init();
         }
 
-        public void ReloadGame()
+        private void ReloadGame()
         {
             boardView.Reset();
             LoadGame();
