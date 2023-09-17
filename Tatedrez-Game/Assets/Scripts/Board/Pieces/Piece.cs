@@ -89,12 +89,6 @@ namespace Tatedrez.Board
         }
         
 #if UNITY_EDITOR
-        public Piece SetType(PieceType type)
-        {
-            this.type = type;
-            return this;
-        }
-        
         public Piece SetOwner(PlayerId player)
         {
             this.owner = player;
