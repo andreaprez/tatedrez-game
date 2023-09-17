@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Tatedrez.Board.Tatedrez.Board;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -13,15 +14,19 @@ namespace Tatedrez.Board
         private bool isPieceSelected;
         private Piece selectedPiece;
         private Cell selectionCell;
+        private Score scores;
 
         public PlayerId ActivePlayer => activePlayer;
         public bool IsPlacementMode => isPlacementMode;
         public bool IsPieceSelected => isPieceSelected;
         public Piece SelectedPiece => selectedPiece;
         public Cell SelectionCell => selectionCell;
+        public Score Scores => scores;
 
-        public BoardModel()
+        public BoardModel(Score scores)
         {
+            this.scores = scores;
+            
             BoardSize = new Vector2Int(3, 3);
             Cells = new Cell[BoardSize.x, BoardSize.y];
 
@@ -121,6 +126,11 @@ namespace Tatedrez.Board
             isPlacementMode = false;
         }
 
+        public void UpdateScore(PlayerId winner)
+        {
+            scores.AddScore(winner);
+        }
+        
         private bool IsValidCell(int x, int y)
         {
             return x >= 0 && x < BoardSize.x && y >= 0 && y < BoardSize.y;

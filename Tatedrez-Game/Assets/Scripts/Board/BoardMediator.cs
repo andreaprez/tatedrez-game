@@ -19,7 +19,7 @@ namespace Tatedrez.Board
 
         public void Init()
         {
-            view.Setup(model.BoardSize, model.ActivePlayer, model.Cells);
+            view.Setup(model.BoardSize, model.ActivePlayer, model.Cells, model.Scores);
 
             InputHandler.Instance.OnTouchEvent += HandleInput;
         }
@@ -133,7 +133,8 @@ namespace Tatedrez.Board
             {
                 AudioManager.PlaySound(AudioManager.Sound.GameEnd);
                 InputHandler.Instance.SetInputBlocked(true);
-                view.GameOver(model.ActivePlayer);
+                model.UpdateScore(model.ActivePlayer);
+                view.GameOver(model.ActivePlayer, model.Scores);
             }
             else
             {

@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Tatedrez.Board.Tatedrez.Board;
 using Tatedrez.Libraries;
 using Tatedrez.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.UI;
 
 namespace Tatedrez.Board
 {
@@ -17,14 +17,19 @@ namespace Tatedrez.Board
         [SerializeField] private Tilemap tilemap;
         [SerializeField] private List<Piece> pieces;
 
-        [Header("Turns Layout")]
+        [Header("Players Layout")]
         [SerializeField] private TextMeshProUGUI turnPlayer1Text;
         [SerializeField] private TextMeshProUGUI turnPlayer2Text;
-        [SerializeField] private TextMeshProUGUI noMovesAvailableText;
+        [SerializeField] private TextMeshProUGUI scoresText;
         
+        [Header("Game Layout")]
+        [SerializeField] private TextMeshProUGUI noMovesAvailableText;
+
         [Header("GameOver Layout")]
-        [SerializeField] private GameObject gameOverLayout;
-        [SerializeField] private TextMeshProUGUI gameOverText;
+        [SerializeField] private GameObject winnerPlayer1Layout;
+        [SerializeField] private GameObject winnerPlayer2Layout;
+        [SerializeField] private TextMeshProUGUI winnerPlayer1Text;
+        [SerializeField] private TextMeshProUGUI winnerPlayer2Text;
 
         [Header("Restart Button")]
         [SerializeField] private TextMeshProUGUI restartButtonText;
@@ -33,7 +38,7 @@ namespace Tatedrez.Board
         
         public List<Piece> Pieces => pieces;
 
-        public void Setup(Vector2Int boardSize, PlayerId activePlayer, Cell[,] cells)
+        public void Setup(Vector2Int boardSize, PlayerId activePlayer, Cell[,] cells, Score scores)
         {
             ClearBoardTiles();
 
@@ -46,14 +51,15 @@ namespace Tatedrez.Board
                 DrawCell(cell.Position);
             }
             
-            SetTexts();
+            SetTexts(scores);
 
             UpdatePlayerTurn(activePlayer);
         }
 
         public void Reset()
         {
-            gameOverLayout.SetActive(false);
+            winnerPlayer1Layout.gameObject.SetActive(false);
+            winnerPlayer2Layout.gameObject.SetActive(false);
 
             foreach (var piece in pieces)
             {
@@ -120,16 +126,31 @@ namespace Tatedrez.Board
             StartCoroutine(ShowNoMovesAvailable(newActivePlayer));
         }
         
-        public void GameOver(PlayerId winner)
+        public void GameOver(PlayerId winner, Score scores)
         {
-            var winnerId = (int)winner;
-            gameOverText.text = LibrariesHandler.GetTextsLibrary().Winner.Replace("%", winnerId.ToString());
-            
-            gameOverLayout.SetActive(true);
+            SetScores(scores);
+
+            turnPlayer1Text.gameObject.SetActive(false);
+            turnPlayer2Text.gameObject.SetActive(false);
+
+            switch (winner)
+            {
+                case PlayerId.Player1:
+                    winnerPlayer1Layout.gameObject.SetActive(true);
+                    break;
+                case PlayerId.Player2:
+                    winnerPlayer2Layout.gameObject.SetActive(true);
+                    break;
+            }
         }
 
-        private void SetTexts()
+        private void SetTexts(Score scores)
         {
+            SetScores(scores);
+            
+            winnerPlayer1Text.text = LibrariesHandler.GetTextsLibrary().Winner.Replace("%", "1");
+            winnerPlayer2Text.text = LibrariesHandler.GetTextsLibrary().Winner.Replace("%", "2");
+            
             turnPlayer1Text.text = LibrariesHandler.GetTextsLibrary().PlayerTurn.Replace("%", "1");
             turnPlayer2Text.text = LibrariesHandler.GetTextsLibrary().PlayerTurn.Replace("%", "2");
 
@@ -138,6 +159,13 @@ namespace Tatedrez.Board
             restartButtonText.text = LibrariesHandler.GetTextsLibrary().RestartButton;
         }
 
+        private void SetScores(Score scores)
+        {
+            var score1 = scores.Player1.ToString();
+            var score2 = scores.Player2.ToString();
+            scoresText.text = LibrariesHandler.GetTextsLibrary().Scores.Replace("%1", score1).Replace("%2", score2);
+        }
+        
         private void ClearBoardTiles()
         {
             if (tilemap.size.x > 0 || tilemap.size.y > 0)
