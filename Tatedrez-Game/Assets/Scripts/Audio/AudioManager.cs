@@ -11,7 +11,8 @@ namespace Tatedrez.Managers
             Select,
             Place,
             InvalidPlacement,
-            RestartButton
+            RestartButton,
+            GameEnd
         }
 
         public static void PlaySound(Sound sound)

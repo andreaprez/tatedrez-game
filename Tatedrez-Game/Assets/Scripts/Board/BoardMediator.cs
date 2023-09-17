@@ -136,6 +136,7 @@ namespace Tatedrez.Board
 
             if (gameover)
             {
+                AudioManager.PlaySound(AudioManager.Sound.GameEnd);
                 InputHandler.Instance.SetInputBlocked(true);
                 view.GameOver(model.ActivePlayer);
             }
