@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 217cd635b96c5f141ae290379694d6c4, type: 3}
   m_Name: TextsLibrary
   m_EditorClassIdentifier: 
-  playerTurn: Player % is moving...
+  playerTurn: '% moves...'
   noMovesAvailable: No moves available. Switching turns...
-  winner: Player % wins!
+  winner: '% wins!'
   restartButton: RESTART
-  scores: '%1 / %2'
+  scores: '%1 |  %2'

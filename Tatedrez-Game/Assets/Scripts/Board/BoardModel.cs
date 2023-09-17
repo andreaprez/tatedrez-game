@@ -110,11 +110,11 @@ namespace Tatedrez.Board
         {
             switch (activePlayer)
             {
-                case PlayerId.Player1:
-                    activePlayer = PlayerId.Player2;
+                case PlayerId.White:
+                    activePlayer = PlayerId.Black;
                     break;
-                case PlayerId.Player2:
-                    activePlayer = PlayerId.Player1;
+                case PlayerId.Black:
+                    activePlayer = PlayerId.White;
                     break;
             }
 

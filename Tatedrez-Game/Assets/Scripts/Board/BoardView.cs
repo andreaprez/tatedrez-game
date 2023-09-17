@@ -5,6 +5,7 @@ using Tatedrez.Libraries;
 using Tatedrez.Utils;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 namespace Tatedrez.Board
@@ -18,18 +19,19 @@ namespace Tatedrez.Board
         [SerializeField] private List<Piece> pieces;
 
         [Header("Players Layout")]
-        [SerializeField] private TextMeshProUGUI turnPlayer1Text;
-        [SerializeField] private TextMeshProUGUI turnPlayer2Text;
+        [SerializeField] private TextMeshProUGUI turnWhiteText;
+        [SerializeField] private TextMeshProUGUI turnBlackText;
         [SerializeField] private TextMeshProUGUI scoresText;
         
         [Header("Game Layout")]
+        [SerializeField] private GameObject noMovesAvailableLayout;
         [SerializeField] private TextMeshProUGUI noMovesAvailableText;
 
         [Header("GameOver Layout")]
-        [SerializeField] private GameObject winnerPlayer1Layout;
-        [SerializeField] private GameObject winnerPlayer2Layout;
-        [SerializeField] private TextMeshProUGUI winnerPlayer1Text;
-        [SerializeField] private TextMeshProUGUI winnerPlayer2Text;
+        [SerializeField] private GameObject winnerWhiteLayout;
+        [SerializeField] private GameObject winnerBlackLayout;
+        [SerializeField] private TextMeshProUGUI winnerWhiteText;
+        [SerializeField] private TextMeshProUGUI winnerBlackText;
 
         [Header("Restart Button")]
         [SerializeField] private TextMeshProUGUI restartButtonText;
@@ -58,9 +60,10 @@ namespace Tatedrez.Board
 
         public void Reset()
         {
-            winnerPlayer1Layout.gameObject.SetActive(false);
-            winnerPlayer2Layout.gameObject.SetActive(false);
-
+            winnerWhiteLayout.SetActive(false);
+            winnerBlackLayout.SetActive(false);
+            noMovesAvailableLayout.SetActive(false);
+            
             foreach (var piece in pieces)
             {
                 piece.Reset();
@@ -107,16 +110,16 @@ namespace Tatedrez.Board
 
         public void UpdatePlayerTurn(PlayerId newActivePlayer)
         {
-            turnPlayer1Text.gameObject.SetActive(false);
-            turnPlayer2Text.gameObject.SetActive(false);
+            turnWhiteText.gameObject.SetActive(false);
+            turnBlackText.gameObject.SetActive(false);
 
             switch (newActivePlayer)
             {
-                case PlayerId.Player1:
-                    turnPlayer1Text.gameObject.SetActive(true);
+                case PlayerId.White:
+                    turnWhiteText.gameObject.SetActive(true);
                     break;
-                case PlayerId.Player2:
-                    turnPlayer2Text.gameObject.SetActive(true);
+                case PlayerId.Black:
+                    turnBlackText.gameObject.SetActive(true);
                     break;
             }
         }
@@ -130,16 +133,16 @@ namespace Tatedrez.Board
         {
             SetScores(scores);
 
-            turnPlayer1Text.gameObject.SetActive(false);
-            turnPlayer2Text.gameObject.SetActive(false);
+            turnWhiteText.gameObject.SetActive(false);
+            turnBlackText.gameObject.SetActive(false);
 
             switch (winner)
             {
-                case PlayerId.Player1:
-                    winnerPlayer1Layout.gameObject.SetActive(true);
+                case PlayerId.White:
+                    winnerWhiteLayout.SetActive(true);
                     break;
-                case PlayerId.Player2:
-                    winnerPlayer2Layout.gameObject.SetActive(true);
+                case PlayerId.Black:
+                    winnerBlackLayout.SetActive(true);
                     break;
             }
         }
@@ -148,11 +151,11 @@ namespace Tatedrez.Board
         {
             SetScores(scores);
             
-            winnerPlayer1Text.text = LibrariesHandler.GetTextsLibrary().Winner.Replace("%", "1");
-            winnerPlayer2Text.text = LibrariesHandler.GetTextsLibrary().Winner.Replace("%", "2");
+            winnerWhiteText.text = LibrariesHandler.GetTextsLibrary().Winner.Replace("%", PlayerId.White.ToString());
+            winnerBlackText.text = LibrariesHandler.GetTextsLibrary().Winner.Replace("%", PlayerId.Black.ToString());
             
-            turnPlayer1Text.text = LibrariesHandler.GetTextsLibrary().PlayerTurn.Replace("%", "1");
-            turnPlayer2Text.text = LibrariesHandler.GetTextsLibrary().PlayerTurn.Replace("%", "2");
+            turnWhiteText.text = LibrariesHandler.GetTextsLibrary().PlayerTurn.Replace("%", PlayerId.White.ToString());
+            turnBlackText.text = LibrariesHandler.GetTextsLibrary().PlayerTurn.Replace("%", PlayerId.Black.ToString());
 
             noMovesAvailableText.text = LibrariesHandler.GetTextsLibrary().NoMovesAvailable;
 
@@ -161,9 +164,9 @@ namespace Tatedrez.Board
 
         private void SetScores(Score scores)
         {
-            var score1 = scores.Player1.ToString();
-            var score2 = scores.Player2.ToString();
-            scoresText.text = LibrariesHandler.GetTextsLibrary().Scores.Replace("%1", score1).Replace("%2", score2);
+            var scoreWhite = scores.PlayerWhite.ToString();
+            var scoreBlack = scores.PlayerBlack.ToString();
+            scoresText.text = LibrariesHandler.GetTextsLibrary().Scores.Replace("%1", scoreWhite).Replace("%2", scoreBlack);
         }
         
         private void ClearBoardTiles()
@@ -178,11 +181,11 @@ namespace Tatedrez.Board
         {
             yield return new WaitForSeconds(1f);
 
-            noMovesAvailableText.gameObject.SetActive(true);
+            noMovesAvailableLayout.SetActive(true);
             
             yield return new WaitForSeconds(2f);
 
-            noMovesAvailableText.gameObject.SetActive(false);
+            noMovesAvailableLayout.SetActive(false);
             UpdatePlayerTurn(newActivePlayer);
             InputHandler.Instance.SetInputBlocked(false);
         }

@@ -26,10 +26,10 @@ namespace Tatedrez.Board
         {
             switch (owner)
             {
-                case PlayerId.Player1:
+                case PlayerId.White:
                     originalOverlayColor = Color.black;
                     break;
-                case PlayerId.Player2:
+                case PlayerId.Black:
                     originalOverlayColor = Color.white;
                     break;
             }

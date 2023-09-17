@@ -4,27 +4,27 @@ namespace Tatedrez.Board
     {
         public class Score
         {
-            private int player1;
-            private int player2;
+            private int playerWhite;
+            private int playerBlack;
 
-            public int Player1 => player1;
-            public int Player2 => player2;
+            public int PlayerWhite => playerWhite;
+            public int PlayerBlack => playerBlack;
 
             public Score()
             {
-                player1 = 0;
-                player2 = 0;
+                playerWhite = 0;
+                playerBlack = 0;
             }
             
             public void AddScore(PlayerId player)
             {
                 switch (player)
                 {
-                    case PlayerId.Player1:
-                        player1++;
+                    case PlayerId.White:
+                        playerWhite++;
                         break;
-                    case PlayerId.Player2:
-                        player2++;
+                    case PlayerId.Black:
+                        playerBlack++;
                         break;
                 }
             }
