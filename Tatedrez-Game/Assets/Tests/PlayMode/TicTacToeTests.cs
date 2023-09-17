@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Tatedrez.Board;
+using Tatedrez.Board.Tatedrez.Board;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -12,7 +13,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator TicTacToeHorizontal()
         {
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
             var view = InitBoardView();
             var mediator = new BoardMediator(model, view);
             
@@ -29,7 +30,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator TicTacToeVertical()
         {
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
             var view = InitBoardView();
             var mediator = new BoardMediator(model, view);
             
@@ -46,7 +47,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator TicTacToeDiagonal()
         {
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
             var view = InitBoardView();
             var mediator = new BoardMediator(model, view);
             
@@ -63,7 +64,7 @@ namespace Tatedrez.Tests
         [UnityTest]
         public IEnumerator TicTacToeNone()
         {
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
             var view = InitBoardView();
 
             var mediator = new BoardMediator(model, view);

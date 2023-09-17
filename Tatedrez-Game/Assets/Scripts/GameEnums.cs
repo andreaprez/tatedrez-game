@@ -6,7 +6,7 @@ namespace Tatedrez
     public enum PlayerId
     {
         None,
-        Player1,
-        Player2
+        White,
+        Black
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using NUnit.Framework;
 using Tatedrez.Board;
+using Tatedrez.Board.Tatedrez.Board;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -13,7 +14,7 @@ namespace Tatedrez.Tests
         public IEnumerator SelectCell()
         {
             var piece = InitPiece();
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
 
             model.Select(piece);
 
@@ -25,7 +26,7 @@ namespace Tatedrez.Tests
         public IEnumerator ClearCell()
         {
             var piece = InitPiece();
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
 
             model.Select(piece);
             model.ClearSelection();
@@ -38,7 +39,7 @@ namespace Tatedrez.Tests
         public IEnumerator MoveToCell()
         {
             var piece = InitPiece();
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
 
             var originCell = model.GetCell(0, 0);
             var targetCell = model.GetCell(1, 0);

@@ -1,4 +1,5 @@
 using Tatedrez.Board;
+using Tatedrez.Board.Tatedrez.Board;
 using Tatedrez.Utils;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,8 @@ namespace Tatedrez.Managers
         [SerializeField] private BoardView boardView;
         [SerializeField] private Button restartButton;
 
+        private Score scores;
+
         private void Start()
         {
             restartButton.onClick.AddListener(() =>
@@ -18,6 +21,8 @@ namespace Tatedrez.Managers
 
                 ReloadGame();
             });
+
+            scores = new Score();
             LoadGame();
         }
 
@@ -26,7 +31,7 @@ namespace Tatedrez.Managers
             InputHandler.Instance.SetInputBlocked(false);
             InputHandler.Instance.ClearEvents();
 
-            var boardModel = new BoardModel();
+            var boardModel = new BoardModel(scores);
             var boardMediator = new BoardMediator(boardModel, boardView);
             boardMediator.Init();
         }

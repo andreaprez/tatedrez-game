@@ -1,6 +1,7 @@
 using System.Collections;
 using NUnit.Framework;
 using Tatedrez.Board;
+using Tatedrez.Board.Tatedrez.Board;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -13,7 +14,7 @@ namespace Tatedrez.Tests
         {
             var piece = InitPiece(PieceType.Knight);
 
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
 
             var origin = new Vector2Int(0, 0);
             var target = new Vector2Int(1, 2);
@@ -29,7 +30,7 @@ namespace Tatedrez.Tests
         {
             var piece = InitPiece(PieceType.Knight);
 
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
 
             var origin = new Vector2Int(0, 0);
             var target = new Vector2Int(1, 1);
@@ -45,7 +46,7 @@ namespace Tatedrez.Tests
         {
             var piece = InitPiece(PieceType.Rook);
 
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
 
             var origin = new Vector2Int(0, 2);
             var target = new Vector2Int(0, 0);
@@ -61,7 +62,7 @@ namespace Tatedrez.Tests
         {
             var piece = InitPiece(PieceType.Rook);
 
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
 
             var origin = new Vector2Int(0, 0);
             var target = new Vector2Int(2, 1);
@@ -77,7 +78,7 @@ namespace Tatedrez.Tests
         {
             var piece = InitPiece(PieceType.Bishop);
 
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
 
             var origin = new Vector2Int(0, 2);
             var target = new Vector2Int(2, 0);
@@ -93,7 +94,7 @@ namespace Tatedrez.Tests
         {
             var piece = InitPiece(PieceType.Bishop);
 
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
 
             var origin = new Vector2Int(0, 0);
             var target = new Vector2Int(0, 1);
@@ -109,7 +110,7 @@ namespace Tatedrez.Tests
         {
             var piece = InitPiece(PieceType.Rook);
 
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
 
             var origin = new Vector2Int(0, 0);
             var target = new Vector2Int(0, 2);
@@ -127,7 +128,7 @@ namespace Tatedrez.Tests
         {
             var piece = InitPiece(PieceType.Bishop);
 
-            var model = new BoardModel();
+            var model = new BoardModel(new Score());
 
             var origin = new Vector2Int(0, 0);
             var target = new Vector2Int(2, 2);
